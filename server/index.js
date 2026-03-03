@@ -5,7 +5,23 @@ const nodemailer = require("nodemailer");
 const rateLimit = require("express-rate-limit");
 
 const app = express();
-app.use(cors());
+
+// app.use(cors());
+
+// server/index.js — replace the cors() call:
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin || origin.includes("localhost") || origin.includes("vercel.app") || origin.includes("lyrcon.com"))
+      cb(null, true);
+    else cb(new Error("CORS not allowed"));
+  },
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
+}));
+app.options("*", cors()); // handle preflight
+
+
+
 app.use(express.json());
 
 const limiter = rateLimit({ windowMs: 60 * 1000, max: 60 });
@@ -111,8 +127,20 @@ function buildEmail(name, company, senderName) {
   };
 }
 
+// function makeGmailTransporter(user, pass) {
+//   return nodemailer.createTransport({ service: "gmail", auth: { user, pass } });
+// }
+
 function makeGmailTransporter(user, pass) {
-  return nodemailer.createTransport({ service: "gmail", auth: { user, pass } });
+  return nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,           // SSL on port 465
+    auth: { user, pass },
+    tls: { rejectUnauthorized: false },  // required for cloud servers
+    pool: true,
+    maxConnections: 1,
+  });
 }
 
 // ── Test connection ──────────────────────────────────────────────
