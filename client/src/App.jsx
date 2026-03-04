@@ -161,7 +161,7 @@ export default function App() {
     const res = await fetch(`${API}/preview`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(first),
+      body: JSON.stringify({ ...first, fromName: gmail.fromName }),
     });
     const data = await res.json();
     setPreviewHtml(data.html);
