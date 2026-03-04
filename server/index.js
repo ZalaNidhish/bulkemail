@@ -6,15 +6,22 @@ const rateLimit = require("express-rate-limit");
 
 const app = express();
 
+
 const corsOptions = {
-  origin: (origin, cb) => {
-    if (!origin || origin.includes("localhost") || origin.includes("vercel.app") || origin.includes("lyrcon.com"))
-      cb(null, true);
-    else cb(new Error("CORS not allowed"));
-  },
+  origin: "*",
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"],
 };
+
+// const corsOptions = {
+//   origin: (origin, cb) => {
+//     if (!origin || origin.includes("localhost") || origin.includes("vercel.app") || origin.includes("lyrcon.com"))
+//       cb(null, true);
+//     else cb(new Error("CORS not allowed"));
+//   },
+//   methods: ["GET", "POST", "OPTIONS"],
+//   allowedHeaders: ["Content-Type"],
+// };
 
 app.options("*", cors(corsOptions)); // handle preflight FIRST
 app.use(cors(corsOptions));
