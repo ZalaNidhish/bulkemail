@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import Papa from "papaparse";
 
-const API = "http://localhost:5000/api";
+const API = "https://bulkemail-9h87.onrender.com/api";
 
 /* ─── Toast notification system ─────────────────────────────── */
 function useToasts() {
