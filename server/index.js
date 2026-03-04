@@ -6,10 +6,7 @@ const rateLimit = require("express-rate-limit");
 
 const app = express();
 
-// app.use(cors());
-
-// server/index.js — replace the cors() call:
-app.use(cors({
+const corsOptions = {
   origin: (origin, cb) => {
     if (!origin || origin.includes("localhost") || origin.includes("vercel.app") || origin.includes("lyrcon.com"))
       cb(null, true);
@@ -17,8 +14,10 @@ app.use(cors({
   },
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"],
-}));
-app.options("*", cors()); // handle preflight
+};
+
+app.options("*", cors(corsOptions)); // handle preflight FIRST
+app.use(cors(corsOptions));
 
 
 
@@ -158,8 +157,9 @@ app.post("/api/test-connection", async (req, res) => {
 
 // ── Preview ──────────────────────────────────────────────────────
 app.post("/api/preview", (req, res) => {
-  const { name = "Elon Musk", company = "Tesla", fromName = "Nidhish" } = req.body;
-  res.json({ html: buildEmail(name, company, fromName).html });
+  const { name = "Elon Musk", company = "Tesla", fromName, senderName } = req.body;
+  const resolvedSenderName = fromName || senderName || "Jay Vaghela";
+  res.json({ html: buildEmail(name, company, resolvedSenderName).html });
 });
 
 // ── Send bulk (SSE streaming) ────────────────────────────────────
